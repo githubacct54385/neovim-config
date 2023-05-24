@@ -20,6 +20,9 @@ Distribution Alternatives:
 
 * Backup your previous configuration (if any exists)
 
+### Ripgrep
+Make sure that you install Ripgrep if you're on Windows to get grep search working
+
 ### Archive Installation
 * On the home/landing page for the project find the blue "<> CODE" button click it and select Local > Download ZIP.
 * Extract the archive to:
