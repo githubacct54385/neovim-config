@@ -21,7 +21,7 @@ Distribution Alternatives:
 * Backup your previous configuration (if any exists)
 
 ### Ripgrep
-Make sure that you install Ripgrep if you're on Windows to get grep search working
+Make sure that you install Ripgrep if you're on Windows to get grep search working.  You can use Chocolatey to install it on Windows.
 
 ### Archive Installation
 * On the home/landing page for the project find the blue "<> CODE" button click it and select Local > Download ZIP.
