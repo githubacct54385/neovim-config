@@ -43,6 +43,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 vim.opt.relativenumber = true
 
+
 -- Install package manager
 --    https://github.com/folke/lazy.nvim
 --    `:help lazy.nvim.txt` for more info
@@ -70,7 +71,7 @@ require('lazy').setup({
   -- Git related plugins
   'tpope/vim-fugitive',
   {
-    -- git blame support
+ -- git blame support
     'f-person/git-blame.nvim'
   },
 
@@ -84,16 +85,16 @@ require('lazy').setup({
     'prettier/vim-prettier'
   },
   -- file explorer
-  {
-    "nvim-tree/nvim-tree.lua",
-    version = "*",
-    dependencies = {
-      "nvim-tree/nvim-web-devicons",
-    },
-    config = function()
-      require("nvim-tree").setup {}
-    end,
-  },
+  --{
+  --  "nvim-tree/nvim-tree.lua",
+  --  version = "*",
+  --  dependencies = {
+  --    "nvim-tree/nvim-web-devicons",
+  --  },
+  --  config = function()
+  --    require("nvim-tree").setup {}
+  --  end,
+  --},
 
   -- NOTE: This is where your plugins related to LSP can be installed.
   --  The configuration is done below. Search for lspconfig to find it below.
@@ -133,7 +134,7 @@ require('lazy').setup({
       },
     },
   },
-   {
+  {
     "catppuccin/nvim",
     lazy = false,
     name = "catppuccin",
@@ -141,7 +142,15 @@ require('lazy').setup({
       vim.cmd.colorscheme 'catppuccin'
     end,
   },
-
+  --{ 
+  --  'rose-pine/neovim', 
+  --  name = 'rose-pine', 
+  --  lazy = false,
+  --  dark_variant = 'dawn',
+  --  config = function() 
+  --    vim.cmd.colorscheme 'rose-pine' 
+  --  end, 
+  --},
   { -- Set lualine as statusline
     'nvim-lualine/lualine.nvim',
     -- See `:help lualine.txt`
@@ -265,6 +274,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = highlight_group,
   pattern = '*',
 })
+
 
 -- [[ Configure Telescope ]]
 -- See `:help telescope` and `:help telescope.setup()`
@@ -410,6 +420,7 @@ local on_attach = function(_, bufnr)
   nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
   nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
 
+
   -- See `:help K` for why this keymap
   nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
   nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
@@ -439,6 +450,7 @@ local servers = {
   -- pyright = {},
   -- rust_analyzer = {},
   -- tsserver = {},
+  omnisharp = {},
 
   lua_ls = {
     Lua = {
