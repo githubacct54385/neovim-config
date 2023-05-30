@@ -85,14 +85,29 @@ require('lazy').setup({
     'prettier/vim-prettier'
   },
   -- file explorer
+  {
+    "nvim-tree/nvim-tree.lua",
+    version = "*",
+    dependencies = {
+      "nvim-tree/nvim-web-devicons",
+    },
+    config = function()
+      require("nvim-tree").setup {}
+    end,
+  },
+  -- jest support
   --{
-  --  "nvim-tree/nvim-tree.lua",
-  --  version = "*",
-  --  dependencies = {
-  --    "nvim-tree/nvim-web-devicons",
-  --  },
+  -- 'David-Kunz/jester',
   --  config = function()
-  --    require("nvim-tree").setup {}
+  --    require("jester").setup({
+  --      cmd = "jest -t '$result' -- $file", -- run command
+  --      identifiers = {"test", "it"}, -- used to identify tests
+  --      prepend = {"describe"}, -- prepend describe blocks
+  --      expressions = {"call_expression"}, -- tree-sitter object used to scan for tests/describe blocks
+  --      path_to_jest_run = 'jest', -- used to run tests
+  --      path_to_jest_debug = './node_modules/.bin/jest', -- used for debugging
+  --      terminal_cmd = ":vsplit | terminal", -- used to spawn a terminal for running tests, for debugging refer to nvim-dap's config
+  --    })
   --  end,
   --},
 
@@ -134,30 +149,51 @@ require('lazy').setup({
       },
     },
   },
-  {
-    "catppuccin/nvim",
-    lazy = false,
-    name = "catppuccin",
-    config = function()
-      vim.cmd.colorscheme 'catppuccin'
-    end,
-  },
-  --{ 
-  --  'rose-pine/neovim', 
-  --  name = 'rose-pine', 
+  -- themes
+  --{
+  --  "catppuccin/nvim",
+  --  lazy = false,
+  --  name = "catppuccin",
+  --  config = function()
+  --    vim.cmd.colorscheme 'catppuccin'
+  --  end,
+  --},
+  --{
+  --  'rose-pine/neovim',
+  --  name = 'rose-pine',
   --  lazy = false,
   --  dark_variant = 'dawn',
-  --  config = function() 
-  --    vim.cmd.colorscheme 'rose-pine' 
-  --  end, 
+  --  config = function()
+  --    vim.cmd.colorscheme 'rose-pine'
+  --  end,
   --},
+
+{
+  'rebelot/kanagawa.nvim',
+  name = 'kanagawa',
+  lazy = false,
+  config = function()
+    vim.cmd.colorscheme 'kanagawa-wave'
+  end
+},
+
+-- glance
+  {
+    "dnlhc/glance.nvim",
+    config = function()
+      require('glance').setup({
+        -- your configuration
+      })
+    end,
+  },
+
   { -- Set lualine as statusline
     'nvim-lualine/lualine.nvim',
     -- See `:help lualine.txt`
     opts = {
       options = {
-        icons_enabled = false,
-        theme = 'onedark',
+        icons_enabled = true,
+        theme = 'auto',
         component_separators = '|',
         section_separators = '',
       },
@@ -183,10 +219,10 @@ require('lazy').setup({
   -- Fuzzy Finder Algorithm which requires local dependencies to be built.
   -- Only load if `make` is available. Make sure you have the system
   -- requirements installed.
-  
-  -- this telescope command has been modified to run on windows 
-  {'nvim-telescope/telescope-fzf-native.nvim', 
-    build = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' 
+
+  -- this telescope command has been modified to run on windows
+  {'nvim-telescope/telescope-fzf-native.nvim',
+    build = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build'
   },
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
@@ -300,6 +336,13 @@ require('telescope').setup {
     }
   },
 }
+-- open telescope when neovim starts only if no other plugin is opening
+vim.api.nvim_create_autocmd("VimEnter", {
+  callback = function()
+    vim.cmd("silent! lua require('telescope.builtin').oldfiles()")
+  end,
+})
+
 -- Enable telescope fzf native, if installed
 pcall(require('telescope').load_extension, 'fzf')
 
@@ -420,6 +463,13 @@ local on_attach = function(_, bufnr)
   nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
   nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
 
+
+
+-- Glance
+vim.keymap.set('n', 'gD', '<CMD>Glance definitions<CR>')
+vim.keymap.set('n', 'gR', '<CMD>Glance references<CR>')
+vim.keymap.set('n', 'gY', '<CMD>Glance type_definitions<CR>')
+vim.keymap.set('n', 'gM', '<CMD>Glance implementations<CR>')
 
   -- See `:help K` for why this keymap
   nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
