@@ -95,21 +95,22 @@ require('lazy').setup({
       require("nvim-tree").setup {}
     end,
   },
-  -- jest support
-  --{
-  -- 'David-Kunz/jester',
-  --  config = function()
-  --    require("jester").setup({
-  --      cmd = "jest -t '$result' -- $file", -- run command
-  --      identifiers = {"test", "it"}, -- used to identify tests
-  --      prepend = {"describe"}, -- prepend describe blocks
-  --      expressions = {"call_expression"}, -- tree-sitter object used to scan for tests/describe blocks
-  --      path_to_jest_run = 'jest', -- used to run tests
-  --      path_to_jest_debug = './node_modules/.bin/jest', -- used for debugging
-  --      terminal_cmd = ":vsplit | terminal", -- used to spawn a terminal for running tests, for debugging refer to nvim-dap's config
-  --    })
-  --  end,
-  --},
+
+  -- Editor tabs
+  {'romgrk/barbar.nvim',
+    dependencies = {
+      'lewis6991/gitsigns.nvim', -- OPTIONAL: for git status
+      'nvim-tree/nvim-web-devicons', -- OPTIONAL: for file icons
+    },
+    init = function() vim.g.barbar_auto_setup = false end,
+    opts = {
+      -- lazy.nvim will automatically call setup for you. put your options here, anything missing will use the default:
+      -- animation = true,
+      -- insert_at_start = true,
+      -- …etc.
+    },
+    version = '^1.0.0', -- optional: only update when a new 1.x version is released
+  },
 
   -- NOTE: This is where your plugins related to LSP can be installed.
   --  The configuration is done below. Search for lspconfig to find it below.
@@ -150,14 +151,14 @@ require('lazy').setup({
     },
   },
   -- themes
-  --{
-  --  "catppuccin/nvim",
-  --  lazy = false,
-  --  name = "catppuccin",
-  --  config = function()
-  --    vim.cmd.colorscheme 'catppuccin'
-  --  end,
-  --},
+  {
+    "catppuccin/nvim",
+    lazy = false,
+    name = "catppuccin",
+    config = function()
+      vim.cmd.colorscheme 'catppuccin'
+    end,
+  },
   --{
   --  'rose-pine/neovim',
   --  name = 'rose-pine',
@@ -168,16 +169,16 @@ require('lazy').setup({
   --  end,
   --},
 
-{
-  'rebelot/kanagawa.nvim',
-  name = 'kanagawa',
-  lazy = false,
-  config = function()
-    vim.cmd.colorscheme 'kanagawa-wave'
-  end
-},
+--{
+--  'rebelot/kanagawa.nvim',
+--  name = 'kanagawa',
+--  lazy = false,
+--  config = function()
+--    vim.cmd.colorscheme 'kanagawa-wave'
+--  end
+--},
 
--- glance
+-- go to references support that mimics VS Code
   {
     "dnlhc/glance.nvim",
     config = function()
@@ -457,17 +458,21 @@ local on_attach = function(_, bufnr)
   nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
 
   nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
-  nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+  --nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
   nmap('gI', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
   nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
   nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
   nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
 
+-- romgrk/barbar.nvim keybindings
+local opts = { noremap = true, silent = true }
+vim.keymap.set('n', '<C-PageUp>', '<Cmd>BufferPrevious<CR>', opts)
+vim.keymap.set('n', '<C-PageDown>', '<Cmd>BufferNext<CR>', opts)
+vim.keymap.set('n', '<C-w>', '<Cmd>BufferClose<CR>', opts)
 
-
--- Glance
+-- Glance keybindings
 vim.keymap.set('n', 'gD', '<CMD>Glance definitions<CR>')
-vim.keymap.set('n', 'gR', '<CMD>Glance references<CR>')
+vim.keymap.set('n', 'gr', '<CMD>Glance references<CR>')
 vim.keymap.set('n', 'gY', '<CMD>Glance type_definitions<CR>')
 vim.keymap.set('n', 'gM', '<CMD>Glance implementations<CR>')
 
