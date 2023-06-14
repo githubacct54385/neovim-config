@@ -1,6 +1,6 @@
 --[[
 
-=====================================================================
+==================================================================
 ==================== READ THIS BEFORE CONTINUING ====================
 =====================================================================
 
@@ -42,7 +42,7 @@ P.S. You can delete this when you're done too. It's your config now :)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 vim.opt.relativenumber = true
-
+vim.o.background = "dark"
 
 -- Install package manager
 --    https://github.com/folke/lazy.nvim
@@ -95,8 +95,9 @@ require('lazy').setup({
       require("nvim-tree").setup {}
     end,
   },
-
-
+  {
+    'https://gitlab.com/yorickpeterse/nvim-window.git'
+  },
   -- eslint related plugins
   { 'neovim/nvim-lspconfig' },
   { 'jose-elias-alvarez/null-ls.nvim' },
@@ -157,14 +158,22 @@ require('lazy').setup({
     },
   },
   -- themes
-  {
-    "catppuccin/nvim",
-    lazy = false,
-    name = "catppuccin",
-    config = function()
-      vim.cmd.colorscheme 'catppuccin'
-    end,
-  },
+  --{
+  --  "catppuccin/nvim",
+  --  lazy = false,
+  --  name = "catppuccin",
+  --  config = function()
+  --    vim.cmd.colorscheme 'catppuccin'
+  --  end,
+  --},
+  { "ellisonleao/gruvbox.nvim", 
+    priority = 1000, 
+    lazy = false, 
+    name = "gruvbox", 
+    config = function() 
+      vim.cmd.colorscheme 'gruvbox' 
+    end, 
+   },
   --{
   --  'rose-pine/neovim',
   --  name = 'rose-pine',
@@ -504,11 +513,112 @@ local on_attach = function(_, bufnr)
   nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
   nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
 
+-- inserts arrange, act, assert into the buffer
+function insertAAA()
+  -- Get the current window
+  local currentWindow = vim.api.nvim_get_current_win()
+
+  -- Get the cursor position in the current window
+  local cursor = vim.api.nvim_win_get_cursor(currentWindow)
+
+  -- Extract the line number from the cursor position
+  local currentLine = cursor[1]
+
+  -- Get the current buffer number
+  local currentBuffer = vim.api.nvim_get_current_buf()
+
+  -- Get the current lines in the buffer
+  local lines = vim.api.nvim_buf_get_lines(currentBuffer, 0, -1, false)
+
+  -- Define the lines to be written
+  local newLines = {
+    "// aarrange",
+    "// act",
+    "const sut = new ReplaceWithSut();",
+    "// assert",
+    "expect(actual).toBe({});"
+  }
+
+  -- Insert the new lines at the cursor
+  vim.api.nvim_buf_set_lines(currentBuffer, currentLine, currentLine, false, newLines)
+end
+
+-- a new test suite for Jest
+function insertJestTestSuite()
+  -- Get the current window
+  local currentWindow = vim.api.nvim_get_current_win()
+
+  -- Get the cursor position in the current window
+  local cursor = vim.api.nvim_win_get_cursor(currentWindow)
+
+  -- Extract the line number from the cursor position
+  local currentLine = cursor[1]
+
+  -- Get the current buffer number
+  local currentBuffer = vim.api.nvim_get_current_buf()
+
+  -- Get the current lines in the buffer
+  local lines = vim.api.nvim_buf_get_lines(currentBuffer, 0, -1, false)
+
+  -- Define the lines to be written
+  local newLines = {
+    "import { afterEach, beforeEach, describe, expect, it, jest } from \"@jest/globals\";",
+    "",
+    "describe(\"TestSuite\", () => {",
+    "beforeEach(() => {})",
+    "afterEach(() => {})",
+    "describe(\"Feature 1\", () => {",
+    "it(\"#1 should do something\", () => {",
+    "// arrange",
+    "const sut = new ReplaceWithSut();",
+    "// act",
+    "const actual = sut.Method();",
+    "// assert",
+    "expect(actual).toBe({});",
+    "});",
+    "});",
+    "});"
+  }
+
+  -- Insert the new lines at the cursor
+  vim.api.nvim_buf_set_lines(currentBuffer, currentLine, currentLine, false, newLines)
+end
+
+-- inserts a console log statement, credit to @Adib_Hanna
+function insertConsoleLog()
+    local line = vim.api.nvim_win_get_cursor(0)[1]
+    local text = vim.api.nvim_get_current_line()
+
+    -- determine variable name
+    local variable = string.match(text, "%s*(%a[%w_]*)%s*=")
+    if not variable then
+      variable = string.match("%s*(%a[%w_]*)%s*$")
+    end
+
+    if variable then
+      local logStatement = string.format("console.log('%s: ', %s)", variable, variable)
+
+      vim.api.nvim_buf_set_lines(0, line, line, false, { logStatement })
+
+    vim.lsp.buf.format()
+  else
+    print('No variable found at the current line')
+  end
+end
+
+-- Custom JS/TS mappings 
+vim.api.nvim_set_keymap("n", "<leader>waaa", ":lua insertAAA()<CR>", { silent = true })
+vim.api.nvim_set_keymap("n", "<leader>wdesc", ":lua insertJestTestSuite()<CR>", { silent = true })
+vim.api.nvim_set_keymap("n", "<leader>wclg", ":lua insertConsoleLog()<CR>", { silent = true })
+
+-- Nvim Tree mappings
+vim.api.nvim_set_keymap("n", "<leader>wfs", ":NvimTreeToggle<CR>", { silent = true })
+
 -- romgrk/barbar.nvim keybindings
 local opts = { noremap = true, silent = true }
 vim.keymap.set('n', '<C-PageUp>', '<Cmd>BufferPrevious<CR>', opts)
 vim.keymap.set('n', '<C-PageDown>', '<Cmd>BufferNext<CR>', opts)
-vim.keymap.set('n', '<C-w>', '<Cmd>BufferClose<CR>', opts)
+vim.keymap.set('n', '<C-x>', '<Cmd>BufferClose<CR>', opts)
 
 -- Glance keybindings
 vim.keymap.set('n', 'gD', '<CMD>Glance definitions<CR>')
@@ -527,7 +637,6 @@ vim.keymap.set('n', 'gM', '<CMD>Glance implementations<CR>')
   nmap('<leader>wl', function()
     print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
   end, '[W]orkspace [L]ist Folders')
-
   -- Create a command `:Format` local to the LSP buffer
   vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)
     vim.lsp.buf.format()
