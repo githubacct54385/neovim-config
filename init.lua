@@ -158,40 +158,61 @@ require('lazy').setup({
     },
   },
   -- themes
-  --{
-  --  "catppuccin/nvim",
-  --  lazy = false,
-  --  name = "catppuccin",
-  --  config = function()
-  --    vim.cmd.colorscheme 'catppuccin'
-  --  end,
-  --},
+  {
+    "catppuccin/nvim",
+    lazy = false,
+    priority = 9,
+    name = "catppuccin",
+    config = function()
+      vim.cmd.colorscheme 'catppuccin'
+    end,
+  },
+  {
+    "baliestri/aura-theme",
+    lazy = false,
+    priority = 9,
+    config = function(plugin)
+      vim.opt.rtp:append(plugin.dir .. "/packages/neovim")
+      vim.cmd([[colorscheme aura-dark]])
+    end
+  },
   { "ellisonleao/gruvbox.nvim", 
-    priority = 1000, 
+    priority = 1, 
     lazy = false, 
     name = "gruvbox", 
     config = function() 
       vim.cmd.colorscheme 'gruvbox' 
     end, 
    },
-  --{
-  --  'rose-pine/neovim',
-  --  name = 'rose-pine',
-  --  lazy = false,
-  --  dark_variant = 'dawn',
-  --  config = function()
-  --    vim.cmd.colorscheme 'rose-pine'
-  --  end,
-  --},
-
---{
---  'rebelot/kanagawa.nvim',
---  name = 'kanagawa',
---  lazy = false,
---  config = function()
---    vim.cmd.colorscheme 'kanagawa-wave'
---  end
---},
+  {
+    'rose-pine/neovim',
+    priority = 9, 
+    name = 'rose-pine',
+    lazy = false,
+    dark_variant = 'dawn',
+    config = function()
+      vim.cmd.colorscheme 'rose-pine'
+    end,
+  },
+  {
+    'rebelot/kanagawa.nvim',
+    priority = 9, 
+    name = 'kanagawa',
+    lazy = false,
+    config = function()
+      vim.cmd.colorscheme 'kanagawa-wave'
+    end
+  },
+  { 
+    "EdenEast/nightfox.nvim", 
+    priority = 9, 
+    name = 'nightfox',
+    lazy = false,
+    config = function()
+      vim.cmd.colorscheme 'terafox'
+    end
+  },
+  
 
 -- go to references support that mimics VS Code
   {
@@ -543,8 +564,30 @@ function insertAAA()
   vim.api.nvim_buf_set_lines(currentBuffer, currentLine, currentLine, false, newLines)
 end
 
+
+-- inserts a console log statement, credit to @Adib_Hanna
+function insertConsoleLog()
+    local line = vim.api.nvim_win_get_cursor(0)[1]
+    local text = vim.api.nvim_get_current_line()
+
+    -- determine variable name
+    local variable = string.match(text, "%s*(%a[%w_]*)%s*=")
+    if not variable then
+      variable = string.match("%s*(%a[%w_]*)%s*$")
+    end
+
+    if variable then
+      local logStatement = string.format("console.log('%s: ', %s)", variable, variable)
+
+      vim.api.nvim_buf_set_lines(0, line, line, false, { logStatement })
+
+    vim.lsp.buf.format()
+  else
+    print('No variable found at the current line')
+  end
+end
 -- a new test suite for Jest
-function insertJestTestSuite()
+function jestSuite()
   -- Get the current window
   local currentWindow = vim.api.nvim_get_current_win()
 
@@ -584,31 +627,9 @@ function insertJestTestSuite()
   vim.api.nvim_buf_set_lines(currentBuffer, currentLine, currentLine, false, newLines)
 end
 
--- inserts a console log statement, credit to @Adib_Hanna
-function insertConsoleLog()
-    local line = vim.api.nvim_win_get_cursor(0)[1]
-    local text = vim.api.nvim_get_current_line()
-
-    -- determine variable name
-    local variable = string.match(text, "%s*(%a[%w_]*)%s*=")
-    if not variable then
-      variable = string.match("%s*(%a[%w_]*)%s*$")
-    end
-
-    if variable then
-      local logStatement = string.format("console.log('%s: ', %s)", variable, variable)
-
-      vim.api.nvim_buf_set_lines(0, line, line, false, { logStatement })
-
-    vim.lsp.buf.format()
-  else
-    print('No variable found at the current line')
-  end
-end
-
 -- Custom JS/TS mappings 
 vim.api.nvim_set_keymap("n", "<leader>waaa", ":lua insertAAA()<CR>", { silent = true })
-vim.api.nvim_set_keymap("n", "<leader>wdesc", ":lua insertJestTestSuite()<CR>", { silent = true })
+vim.api.nvim_set_keymap("n", "<leader>wdesc", ":lua jestSuite()<CR>", { silent = true })
 vim.api.nvim_set_keymap("n", "<leader>wclg", ":lua insertConsoleLog()<CR>", { silent = true })
 
 -- Nvim Tree mappings
