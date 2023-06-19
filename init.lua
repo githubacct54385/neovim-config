@@ -96,7 +96,7 @@ require('lazy').setup({
     end,
   },
   {
-    'https://gitlab.com/yorickpeterse/nvim-window.git'
+    'VidocqH/lsp-lens.nvim'
   },
   -- eslint related plugins
   { 'neovim/nvim-lspconfig' },
@@ -177,7 +177,7 @@ require('lazy').setup({
     end
   },
   { "ellisonleao/gruvbox.nvim", 
-    priority = 1, 
+    priority = 9, 
     lazy = false, 
     name = "gruvbox", 
     config = function() 
@@ -186,7 +186,7 @@ require('lazy').setup({
    },
   {
     'rose-pine/neovim',
-    priority = 9, 
+    priority = 1, 
     name = 'rose-pine',
     lazy = false,
     dark_variant = 'dawn',
@@ -373,6 +373,19 @@ require('telescope').setup {
     }
   },
 }
+
+require('lsp-lens').setup({
+  enable = true,
+  include_declaration = false,      -- Reference include declaration
+  sections = {                      -- Enable / Disable specific request
+    definition = true,
+    references = true,
+    implementation = true,
+  },
+  ignore_filetype = {
+    "prisma",
+  },
+})
 
 local eslint = require("eslint")
 local status, null_ls = pcall(require, "null-ls")
@@ -564,7 +577,6 @@ function insertAAA()
   vim.api.nvim_buf_set_lines(currentBuffer, currentLine, currentLine, false, newLines)
 end
 
-
 -- inserts a console log statement, credit to @Adib_Hanna
 function insertConsoleLog()
     local line = vim.api.nvim_win_get_cursor(0)[1]
@@ -585,6 +597,33 @@ function insertConsoleLog()
   else
     print('No variable found at the current line')
   end
+end
+
+-- inserts an empty console log statement, credit to @Adib_Hanna
+function insertConsoleLogEmpty()
+-- Get the current window
+  local currentWindow = vim.api.nvim_get_current_win()
+
+  -- Get the cursor position in the current window
+  local cursor = vim.api.nvim_win_get_cursor(currentWindow)
+
+  -- Extract the line number from the cursor position
+  local currentLine = cursor[1]
+
+  -- Get the current buffer number
+  local currentBuffer = vim.api.nvim_get_current_buf()
+
+  -- Get the current lines in the buffer
+  local lines = vim.api.nvim_buf_get_lines(currentBuffer, 0, -1, false)
+
+  -- Define the lines to be written
+  local newLines = {
+    "console.log();"
+  }
+
+  -- Insert the new lines at the cursor
+  vim.api.nvim_buf_set_lines(currentBuffer, currentLine, currentLine, false, newLines)
+
 end
 -- a new test suite for Jest
 function jestSuite()
@@ -631,6 +670,7 @@ end
 vim.api.nvim_set_keymap("n", "<leader>waaa", ":lua insertAAA()<CR>", { silent = true })
 vim.api.nvim_set_keymap("n", "<leader>wdesc", ":lua jestSuite()<CR>", { silent = true })
 vim.api.nvim_set_keymap("n", "<leader>wclg", ":lua insertConsoleLog()<CR>", { silent = true })
+vim.api.nvim_set_keymap("n", "<leader>wclf", ":lua insertConsoleLogEmpty()<CR>", { silent = true })
 
 -- Nvim Tree mappings
 vim.api.nvim_set_keymap("n", "<leader>wfs", ":NvimTreeToggle<CR>", { silent = true })
