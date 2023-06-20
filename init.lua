@@ -42,7 +42,7 @@ P.S. You can delete this when you're done too. It's your config now :)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 vim.opt.relativenumber = true
-vim.o.background = "dark"
+--vim.o.background = "dark"
 
 -- Install package manager
 --    https://github.com/folke/lazy.nvim
@@ -74,16 +74,13 @@ require('lazy').setup({
  -- git blame support
     'f-person/git-blame.nvim'
   },
-
   'tpope/vim-rhubarb',
-
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
-
   -- prettier support
-  {
-    'prettier/vim-prettier'
-  },
+  'prettier/vim-prettier',
+  -- icons for file types
+  'nvim-tree/nvim-web-devicons',
   -- file explorer
   {
     "nvim-tree/nvim-tree.lua",
@@ -95,6 +92,7 @@ require('lazy').setup({
       require("nvim-tree").setup {}
     end,
   },
+  -- shows number of references, implementations about a function/method
   {
     'VidocqH/lsp-lens.nvim'
   },
@@ -186,10 +184,9 @@ require('lazy').setup({
    },
   {
     'rose-pine/neovim',
-    priority = 1, 
+    priority = 9, 
     name = 'rose-pine',
     lazy = false,
-    dark_variant = 'dawn',
     config = function()
       vim.cmd.colorscheme 'rose-pine'
     end,
@@ -210,6 +207,16 @@ require('lazy').setup({
     lazy = false,
     config = function()
       vim.cmd.colorscheme 'terafox'
+    end
+  },
+  {
+    "folke/tokyonight.nvim",
+    lazy = false,
+    priority = 1,
+    name = 'tokyoNight',
+    opts = {},
+    config = function()
+      vim.cmd.colorscheme 'tokyoNight'
     end
   },
   
