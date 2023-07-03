@@ -219,8 +219,23 @@ require('lazy').setup({
       vim.cmd.colorscheme 'tokyoNight'
     end
   },
-  
-
+  {
+    "sainnhe/everforest",
+    lazy = false,
+    priority = 9,
+    name = 'everforest',
+    opts = {},
+    config = function()
+      vim.cmd.colorscheme 'everforest'
+    end
+  },
+  -- comment utilities
+  {
+   'numToStr/Comment.nvim',
+    config = function()
+        require('Comment').setup()
+    end
+  },
 -- go to references support that mimics VS Code
   {
     "dnlhc/glance.nvim",
@@ -230,7 +245,6 @@ require('lazy').setup({
       })
     end,
   },
-
   { -- Set lualine as statusline
     'nvim-lualine/lualine.nvim',
     -- See `:help lualine.txt`
